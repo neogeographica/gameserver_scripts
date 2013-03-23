@@ -1,0 +1,9 @@
+#!/bin/bash
+
+SERVERTYPE=q1
+GAMETYPE=excoop
+SERVERPORT=27502
+BASEDIR=/home/gameservers
+SERVERDIR=${GAMETYPE}_server
+
+. ${BASEDIR}/scriptlib/server_loop

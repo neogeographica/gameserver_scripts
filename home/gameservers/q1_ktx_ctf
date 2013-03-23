@@ -1,0 +1,9 @@
+#!/bin/bash
+
+SERVERTYPE=q1
+GAMETYPE=ktx_ctf
+SERVERPORT=27501
+BASEDIR=/home/gameservers
+SERVERDIR=${GAMETYPE}_server
+
+. ${BASEDIR}/scriptlib/server_loop

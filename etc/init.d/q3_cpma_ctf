@@ -1,0 +1,21 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          q3_cpma_ctf
+# Required-Start:    $local_fs $network
+# Required-Stop:     $local_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Starts Quake 3 CPMA CTF server
+# Description:       This script starts the Quake 3 CPMA CTF server
+### END INIT INFO
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+NAME=$(basename "$0")
+USER=gameservers
+WORKINGDIR=/home/${USER}
+PIDFILE=${WORKINGDIR}/${NAME}.pid
+COMMAND=${WORKINGDIR}/${NAME}
+DESCRIPTION="Quake 3 CPMA CTF"
+
+. /lib/init/gameserver.sh $@

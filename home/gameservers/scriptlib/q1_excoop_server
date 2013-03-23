@@ -1,0 +1,1 @@
+./mvdsv -game coop -port ${SERVERPORT} +logrcon +logplayers +exec mylan.cfg +sv_serverip "\"${MYIP}:${SERVERPORT}\"" &

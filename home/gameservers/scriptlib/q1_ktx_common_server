@@ -1,0 +1,1 @@
+./mvdsv -game ktx -port ${SERVERPORT} +logrcon +logplayers +exec mylan.cfg +sv_serverip "\"${MYIP}:${SERVERPORT}\"" +qtv_streamport "\"${SERVERPORT}\"" &

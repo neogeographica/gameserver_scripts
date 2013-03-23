@@ -1,0 +1,15 @@
+PIDFILE=${BASEDIR}/${SERVERTYPE}_${GAMETYPE}.pid
+SERVERROOT=${BASEDIR}/servers/${SERVERTYPE}_server
+if [ "X${SERVERDIR}" != "X" ]; then
+  SERVERROOT=${SERVERROOT}/${SERVERDIR}
+fi
+SERVERSCRIPT=${BASEDIR}/scriptlib/${SERVERTYPE}_${GAMETYPE}_server
+
+echo $$ > $PIDFILE
+cd ${SERVERROOT}
+while true ; do
+  MYIP=`${BASEDIR}/myip`
+  . ${SERVERSCRIPT}
+  trap "kill $!; rm -f $PIDFILE; exit" 0 2 3 15
+  wait
+done
