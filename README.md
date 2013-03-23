@@ -11,7 +11,7 @@ Init Scripts
 
 Init scripts are useful if you want to autostart one or more servers when the host boots up, and stop servers nicely on host shutdown.  (I won't go into details about configuring init scripts here; that's generic Debian/Linux behavior that is documented in plenty of other spots.)
 
-  Even if you don't want that behavior, init scripts can also be invoked manually to stop/start/restart servers and check whether a server is running, and they will refuse to start a particular server if it is already running.  They might also provide a nice hook to use with Webmin although I haven't investigated that yet.
+Even if you don't want that behavior, init scripts can also be invoked manually to stop/start/restart servers and check whether a server is running, and they will refuse to start a particular server if it is already running.  They might also provide a nice hook to use with Webmin although I haven't investigated that yet.
 
 In this setup, a distinct "server" is not just an executable but also some combination of options and assets.  Each init script specifies some variables that define a specific server.
 
@@ -33,6 +33,8 @@ example init scripts
 
 The various files under "/etc/init.d" in this repository are init scripts that I use for our QuakeWorld and Quake 3 servers.  The way I have things set up, the COMMAND and PIDFILE for an init script will have the same basename as the init script itself, but you could use some other naming convention if you like.
 
+**\* Warning:** there is one brittle coupling between the init scripts and the server scripts that I need to get rid of.  My init scripts expect that the PID file will be created as ${NAME}.pid where NAME is the name of the init script.  The server scripts create the PID file at ${SERVERTYPE}\_${GAMETYPE}.pid ... so this system only works if the init script is named as ${SERVERTYPE}\_${GAMETYPE}.  I need to remove that dependence one way or another.
+
 The init scripts are not going to differ much.  (In my case literally the only thing that differs is the script filename and the description of the service.)  The different server behaviors come from the different commands that each script runs.
 
 The need to have a separate init script for each server configuration, rather than having an UberScript that takes an argument about which server to control, is basically a constraint of the way init scripts are handled at startup/shutdown time.  You need separate scripts for separate services.
@@ -47,7 +49,7 @@ overview
 
 The files under "/home/gameservers" in this repository are the scripts that actually run the servers.  Some of these are the commands that are launched by the init scripts, and the rest are utility/subroutine scripts used by the command scripts.
 
-There's a pretty clean separation between this stuff and the init scripts.  The init scripts don't know anything about the internals of the commands or the other scripts used to run the servers.  Conversely, the commands don't need to be invoked through the init scripts; you could run the commands manually, if you don't care about any of the niceties described in the Init Scripts section.  In any case, don't mix and match server launch methods.  Either always use the init scripts, or never use them.
+There's a pretty clean separation between this stuff and the init scripts.  The init scripts don't know anything about the internals of the commands or the other scripts used to run the servers.  Conversely, the commands don't need to be invoked through the init scripts; you could run the commands manually, if you don't care about any of the niceties described in the Init Scripts section.
 
 The files directly in "/home/gameservers" are some example commands and the utility "myip" script.
 
