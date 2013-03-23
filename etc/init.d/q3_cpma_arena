@@ -11,11 +11,8 @@
 ### END INIT INFO
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
-NAME=$(basename "$0")
 USER=gameservers
-WORKINGDIR=/home/${USER}
-PIDFILE=${WORKINGDIR}/${NAME}.pid
-COMMAND=${WORKINGDIR}/${NAME}
+COMMAND=/home/${USER}/$(basename "$0")
 DESCRIPTION="Quake 3 CPMA Multi-Arena"
 
 . /lib/init/gameserver.sh $@

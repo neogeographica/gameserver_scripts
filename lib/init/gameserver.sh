@@ -3,6 +3,8 @@
 #
 
 SHORTCMD=$(basename "$COMMAND")
+WORKINGDIR=$(dirname "$COMMAND")
+PIDFILE=${COMMAND}.pid
 
 . /lib/lsb/init-functions
 

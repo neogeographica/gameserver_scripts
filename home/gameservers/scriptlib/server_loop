@@ -1,11 +1,19 @@
-PIDFILE=${BASEDIR}/${SERVERTYPE}_${GAMETYPE}.pid
+# Set a PID filename based on the command filename.
+PIDFILE=${0}.pid
+
+# Pick a working directory for the server launch script.
 SERVERROOT=${BASEDIR}/servers/${SERVERTYPE}_server
 if [ "X${SERVERDIR}" != "X" ]; then
   SERVERROOT=${SERVERROOT}/${SERVERDIR}
 fi
+
+# Select the server launch script.
 SERVERSCRIPT=${BASEDIR}/scriptlib/${SERVERTYPE}_${GAMETYPE}_server
 
+# Create the PID FILE.
 echo $$ > $PIDFILE
+
+# Launch the server and keep it alive until intentionally killed.
 cd ${SERVERROOT}
 while true ; do
   MYIP=`${BASEDIR}/myip`

@@ -22,18 +22,22 @@ common code
 
 The core of the init scripts is in "/lib/init/gameserver.sh".  This is generic code that implements start/stop/restart/status commands for any game server.  An init script that uses "gameserver.sh" should first define these variables to describe a specific game server:
 
-* COMMAND : complete path to the command used to launch the server
-* WORKINGDIR : complete path to the working directory to use when executing the command
-* PIDFILE : complete path where a PID file will be created
+* COMMAND : complete path to a file that can be executed to launch the server
+* PATH : executables search path that should be used when launching the server
 * USER : user to run the server as
-* DESCRIPTION : description of the server (printed in various messages)
+* DESCRIPTION : description of the server (printed in various init-script messages)
+
+The "gameserver.sh" code makes a couple of assumptions based on these variables:
+
+* The working directory (when launching the server) will be the directory where the COMMAND file is located.
+* The PID file will be created as ${COMMAND}.pid
+
+The PID file location is not configurable in the init script because I want to make sure that normal fiddling with server configuration won't violate this expectation.  Similarly on the server-scripts side of things, the PID file location is determined internally rather than being open to configuration.
 
 example init scripts
 --------------------
 
-The various files under "/etc/init.d" in this repository are init scripts that I use for our QuakeWorld and Quake 3 servers.  The way I have things set up, the COMMAND and PIDFILE for an init script will have the same basename as the init script itself, but you could use some other naming convention if you like.
-
-**\* Warning:** there is one brittle coupling between the init scripts and the server scripts that I need to get rid of.  My init scripts expect that the PID file will be created as ${NAME}.pid where NAME is the name of the init script.  The server scripts create the PID file at ${SERVERTYPE}\_${GAMETYPE}.pid ... so this system only works if the init script is named as ${SERVERTYPE}\_${GAMETYPE}.  I need to remove that dependence one way or another.
+The various files under "/etc/init.d" in this repository are init scripts that I use for our QuakeWorld and Quake 3 servers.  The way I have things set up, the COMMAND for an init script will have the same basename as the init script itself, but you could use some other naming convention if you like.
 
 The init scripts are not going to differ much.  (In my case literally the only thing that differs is the script filename and the description of the service.)  The different server behaviors come from the different commands that each script runs.
 
@@ -51,11 +55,13 @@ The files under "/home/gameservers" in this repository are the scripts that actu
 
 There's a pretty clean separation between this stuff and the init scripts.  The init scripts don't know anything about the internals of the commands or the other scripts used to run the servers.  Conversely, the commands don't need to be invoked through the init scripts; you could run the commands manually, if you don't care about any of the niceties described in the Init Scripts section.
 
+**\* Note:** There's currently an issue with proper cleanup of PID files when running the command scripts manually.  I think this used to work?  Anyway it's something that I will investigate.  I'd recommend just using the init scripts.
+
 The files directly in "/home/gameservers" are some example commands and the utility "myip" script.
 
 The "scriptlib" directory contains the actual brains of the commands.
 
-The "servers" directory contains the actual executables and data files for the game servers.  There's nothing from that directory in this repository (yet?) but I'll discuss its structure below because the scripts work with that structure.
+The actual executables and data files for the game servers should be placed in a "servers" directory.  There's nothing from that directory in this repository (yet?) but I'll discuss its structure below because the scripts work with that structure.
 
 "myip" script
 -------------
@@ -76,19 +82,21 @@ Command scripts should have execute permissions if you want to run them manually
 "scriptlib" directory
 ---------------------
 
-"server\_loop" is the main script that runs a server executable and restarts it if it crashes.  A command script should set up these variables before using "server\_loop":
+"server\_loop" is the main script that runs a server executable and restarts it if it crashes.  "server\_loop" manages creating and deleting the PID files that the init scripts use to determine if a server is currently running.
 
-* BASEDIR : directory where the "servers" and "scriptlib" directories and "myip" are, and where the PID files will be created (in my case, this is always "/home/gameservers")
-* SERVERTYPE : designator for the server executable (in my case, either "q1" or "q3"); used in naming conventions for PID files, server launch scripts, and the directory containing the server executable
-* GAMETYPE : designator for the game/mod code to be used by this server (in my case, "ktx\_ctf", "cpma\_arena", etc.); used in naming conventions for PID files and server launch scripts
+A command script should set up these variables before using "server\_loop":
+
+* BASEDIR : directory where the "servers" and "scriptlib" directories and "myip" are (in my case, this is always "/home/gameservers")
+* SERVERTYPE : designator for the server executable (in my case, either "q1" or "q3"); used in naming conventions for server launch scripts and the directories containing server executables
+* GAMETYPE : designator for the game/mod code to be used by this server (in my case, "ktx\_ctf", "cpma\_arena", etc.); used in naming conventions for server launch scripts
 * SERVERPORT : port that clients should contact the server on
 * SERVERDIR : optional; the name of a subdirectory where the server executable is... more on this below
 
-When "server\_loop" executes, it first chooses a new working directory.  If SERVERDIR is defined, then the working directory will be ${BASEDIR}/servers/${SERVERTYPE}_server/${SERVERDIR}
+When "server\_loop" executes, it chooses a new working directory.  If SERVERDIR is defined, then the working directory will be ${BASEDIR}/servers/${SERVERTYPE}_server/${SERVERDIR}
 
 If SERVERDIR is not defined then the working directory will just be ${BASEDIR}/servers/${SERVERTYPE}_server
 
-The section below on the "servers" directory structure has some discussion on why you might or might not want to have a unique SERVERDIR for each server.
+The section below on the "servers" directory structure has some discussion on why you might or might not want to have a unique SERVERDIR for each of the servers that share a particular executable.
 
 To actually launch the server, "server\_loop" runs some other script from "scriptlib", chosen according to this naming convention: ${SERVERTYPE}\_${GAMETYPE}\_server
 
