@@ -10,7 +10,7 @@ PIDFILE=${COMMAND}.pid
 
 start()
 {
-    start-stop-daemon --pidfile "$PIDFILE" --exec "$COMMAND" --oknodo --quiet --chuid "$USER" --chdir "$WORKINGDIR" --background --start
+    start-stop-daemon --pidfile "$PIDFILE" --startas "$COMMAND" --oknodo --quiet --chuid "$USER" --chdir "$WORKINGDIR" --background --start
 }
 
 stop()
