@@ -55,8 +55,6 @@ The files under "/home/gameservers" in this repository are the scripts that actu
 
 There's a pretty clean separation between this stuff and the init scripts.  The init scripts don't know anything about the internals of the commands or the other scripts used to run the servers.  Conversely, the commands don't need to be invoked through the init scripts; you could run the commands manually, if you don't care about any of the niceties described in the Init Scripts section.
 
-**\* Note:** There's currently an issue with proper cleanup of PID files when running the command scripts manually.  I think this used to work?  Anyway it's something that I will investigate.  I'd recommend just using the init scripts.
-
 The files directly in "/home/gameservers" are some example commands and the utility "myip" script.
 
 The "scriptlib" directory contains the actual brains of the commands.

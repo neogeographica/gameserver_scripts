@@ -1,6 +1,10 @@
 # Set a PID filename based on the command filename.
 PIDFILE=${0}.pid
 
+# Grab the working directory in case the command is a relative path; we'll
+# need it later to properly delete the PID file.
+PREVIOUS_PWD=$PWD
+
 # Pick a working directory for the server launch script.
 SERVERROOT=${BASEDIR}/servers/${SERVERTYPE}_server
 if [ "X${SERVERDIR}" != "X" ]; then
@@ -14,10 +18,10 @@ SERVERSCRIPT=${BASEDIR}/scriptlib/${SERVERTYPE}_${GAMETYPE}_server
 echo $$ > $PIDFILE
 
 # Launch the server and keep it alive until intentionally killed.
-cd ${SERVERROOT}
+cd $SERVERROOT
 while true ; do
   MYIP=`${BASEDIR}/myip`
-  . ${SERVERSCRIPT}
-  trap "kill $!; rm -f $PIDFILE; exit" 0 2 3 15
+  . $SERVERSCRIPT
+  trap "kill $! > /dev/null 2>&1; cd $PREVIOUS_PWD; rm -f $PIDFILE; exit" 0 2 3 15
   wait
 done
