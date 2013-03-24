@@ -18,10 +18,10 @@ SERVERSCRIPT=${BASEDIR}/scriptlib/${SERVERTYPE}_${GAMETYPE}_server
 echo $$ > $PIDFILE
 
 # Launch the server and keep it alive until intentionally killed.
-cd $SERVERROOT
+cd "$SERVERROOT"
 while true ; do
-  MYIP=`${BASEDIR}/myip`
-  . $SERVERSCRIPT
-  trap "kill $! > /dev/null 2>&1; cd $PREVIOUS_PWD; rm -f $PIDFILE; exit" 0 2 3 15
+  MYIP=`"${BASEDIR}/myip"`
+  . "$SERVERSCRIPT"
+  trap "kill $! > /dev/null 2>&1; cd \"$PREVIOUS_PWD\"; rm -f \"$PIDFILE\"; exit" 0 2 3 15
   wait
 done
