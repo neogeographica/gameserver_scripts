@@ -1,9 +1,26 @@
 #!/bin/bash
 
+# The "job" of this script is to set SERVERROOT and CMDLINE, then run
+# the code in scriptlib/server_loop.
+
+# Reference point for some other directories.
+BASEDIR=/home/gameservers
+
+# Basic info about server.
 SERVERTYPE=q1
 GAMETYPE=excoop
-SERVERPORT=27502
-BASEDIR=/home/gameservers
-SERVERDIR=${GAMETYPE}_server
 
+# IP and port for client connections.
+MYIP=`"${BASEDIR}/scriptlib/myip"`
+SERVERPORT=27502
+
+# Working directory used by server_loop.
+SERVERROOT=${BASEDIR}/servers/${SERVERTYPE}_server/${GAMETYPE}_server
+
+# Set up the command line used by server_loop when launching the server.
+# (Using a bash array here to reduce nested-quoting confusions.)
+CMDLINE_ARRAY=(./mvdsv -game coop -port ${SERVERPORT} +logrcon +logplayers +exec mylan.cfg +sv_serverip \\\"${MYIP}:${SERVERPORT}\\\")
+CMDLINE=${CMDLINE_ARRAY[@]}
+
+# Away we go!
 . "${BASEDIR}/scriptlib/server_loop"

@@ -1,1 +1,0 @@
-./ioq3ded.i386 +set net_port ${SERVERPORT} +set sv_dlURL "\"http://${MYIP}/${SERVERDIR}\"" +set fs_basepath ${SERVERROOT} +set fs_homepath ${SERVERROOT} +set dedicated 1 +set com_hunkmegs 64 +set sv_pure 1 +set fs_game cpma +set vm_game 2 +exec mylan.cfg &

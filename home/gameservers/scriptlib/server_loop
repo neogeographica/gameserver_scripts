@@ -1,27 +1,25 @@
+# This code uses SERVERROOT and CMDLINE variables.
+# SERVERROOT : working directory used when launching the server
+# CMDLINE : command line for launching the server
+
 # Set a PID filename based on the command filename.
 PIDFILE=${0}.pid
+
+# Create the PID FILE.
+echo $$ > "$PIDFILE"
 
 # Grab the working directory in case the command is a relative path; we'll
 # need it later to properly delete the PID file.
 PREVIOUS_PWD=$PWD
 
-# Pick a working directory for the server launch script.
-SERVERROOT=${BASEDIR}/servers/${SERVERTYPE}_server
-if [ "X${SERVERDIR}" != "X" ]; then
-  SERVERROOT=${SERVERROOT}/${SERVERDIR}
-fi
-
-# Select the server launch script.
-SERVERSCRIPT=${BASEDIR}/scriptlib/${SERVERTYPE}_${GAMETYPE}_server
-
-# Create the PID FILE.
-echo $$ > "$PIDFILE"
-
-# Launch the server and keep it alive until intentionally killed.
+# Change to the desired working directory.
 cd "$SERVERROOT"
+
+# Launch the server executable in the background.
+# If it dies (instead of being intentionally killed), restart it.
+CMDLINE="${CMDLINE} &"
 while true ; do
-  MYIP=`"${BASEDIR}/myip"`
-  . "$SERVERSCRIPT"
+  eval $CMDLINE
   trap "kill $! > /dev/null 2>&1; cd \"$PREVIOUS_PWD\"; rm -f \"$PIDFILE\"; exit" 0 2 3 15
   wait
 done

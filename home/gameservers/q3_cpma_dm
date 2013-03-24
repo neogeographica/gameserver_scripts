@@ -1,9 +1,26 @@
 #!/bin/bash
 
+# The "job" of this script is to set SERVERROOT and CMDLINE, then run
+# the code in scriptlib/server_loop.
+
+# Reference point for some other directories.
+BASEDIR=/home/gameservers
+
+# Basic info about server.
 SERVERTYPE=q3
 GAMETYPE=cpma_dm
-SERVERPORT=27960
-BASEDIR=/home/gameservers
-SERVERDIR=${GAMETYPE}_server
 
+# IP and port for client connections.
+MYIP=`"${BASEDIR}/scriptlib/myip"`
+SERVERPORT=27960
+
+# Working directory used by server_loop.
+SERVERROOT=${BASEDIR}/servers/${SERVERTYPE}_server/${GAMETYPE}_server
+
+# Set up the command line used by server_loop when launching the server.
+# (Using a bash array here to reduce nested-quoting confusions.)
+CMDLINE_ARRAY=(./ioq3ded.i386 +set net_port ${SERVERPORT} +set sv_dlURL \\\"http://${MYIP}/${GAMETYPE}_server\\\" +set fs_basepath ${SERVERROOT} +set fs_homepath ${SERVERROOT} +set dedicated 1 +set com_hunkmegs 64 +set sv_pure 1 +set fs_game cpma +set vm_game 2 +exec mylan.cfg)
+CMDLINE=${CMDLINE_ARRAY[@]}
+
+# Away we go!
 . "${BASEDIR}/scriptlib/server_loop"
