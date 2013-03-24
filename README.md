@@ -16,7 +16,7 @@ Init scripts are useful if you want to autostart one or more servers when the ho
 
 Even if you don't want that behavior, init scripts can also be invoked manually to stop/start/restart servers and check whether a server is running, and they will refuse to start a particular server if it is already running.  Servers run through these init scripts will be run as background "daemon" processes, so they don't tie up a terminal window.  Init scripts might also provide a nice hook to use with Webmin although I haven't investigated that yet.
 
-**\* ! \*** Currently if you try to start a server when it is already running, the script will just silently do nothing.  It would be better to have it print a warning.
+__\* ! \*__ Currently if you try to start a server when it is already running, the script will just silently do nothing.  It would be better to have it print a warning.
 
 In this setup, a distinct "server" is not just an executable but also some combination of options and assets.  Each init script specifies some variables that define a specific server.
 
@@ -83,9 +83,9 @@ Reconfiguring a server may involve modifying a command script and/or modifying s
 
 The various files under "/home/gameservers" in this repository are examples of command scripts.  They're the command scripts that I use for our QuakeWorld and Quake 3 servers.  The command-line options and config file names in these example scripts are just the ones that I happen to use for our local LAN; they may not be right for anyone else.  (Although if you notice something I'm doing that is just plain wrong, please let me know.)
 
-**\* ! \*** Particularly note that the Quake 3 server command lines set the "sv\_dlURL" variable, because my host has a webserver that provides pk3 files for high-speed downloads supported by the ioquake3 client.  Each server has its own directory of downloadable files that is related to the SERVERDIR variable.  You would *not* want to set "sv\_dlURL" in your command line if you don't have such a webserver configured.  (The webserver setup is kind of interesting so I may add some info about that at a later date.)
+__\* ! \*__ Particularly note that the Quake 3 server command lines set the "sv\_dlURL" variable, because my host has a webserver that provides pk3 files for high-speed downloads supported by the ioquake3 client.  Each server has its own directory of downloadable files that is related to the SERVERDIR variable.  You would *not* want to set "sv\_dlURL" in your command line if you don't have such a webserver configured.  (The webserver setup is kind of interesting so I may add some info about that at a later date.)
 
-**\* ! \*** There's still quite a bit of common code between various command scripts.  Might be good to factor that out and dump it into "scriptlib".  On the other hand, having every relevant configuration in the command script makes things simpler to understand.
+__\* ! \*__ There's still quite a bit of common code between various command scripts.  Might be good to factor that out and dump it into "scriptlib".  On the other hand, having every relevant configuration in the command script makes things simpler to understand.
 
 Command scripts should have execute permissions if you want to run them manually.
 
@@ -98,7 +98,7 @@ Also I run it manually every now and then, since I actually run these servers in
 
 "myip" should have execute permissions if you want to run it manually.
 
-**\* ! \*** On a multi-interface host, you'd need to be able to specify something in the command script that indicated which interface to use, then have "myip" make use of that selection, then use the appropriate command-line argument when launching the server to specifically ask the server to bind to the address returned by "myip".  Seems doable but I haven't experimented with it.
+__\* ! \*__ On a multi-interface host, you'd need to be able to specify something in the command script that indicated which interface to use, then have "myip" make use of that selection, then use the appropriate command-line argument when launching the server to specifically ask the server to bind to the address returned by "myip".  Seems doable but I haven't experimented with it.
 
 common code: "server\_loop"
 ---------------------------
