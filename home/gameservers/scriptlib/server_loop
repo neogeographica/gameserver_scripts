@@ -15,7 +15,7 @@ fi
 SERVERSCRIPT=${BASEDIR}/scriptlib/${SERVERTYPE}_${GAMETYPE}_server
 
 # Create the PID FILE.
-echo $$ > $PIDFILE
+echo $$ > "$PIDFILE"
 
 # Launch the server and keep it alive until intentionally killed.
 cd "$SERVERROOT"
