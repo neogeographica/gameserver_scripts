@@ -14,7 +14,7 @@ overview
 
 Init scripts are useful if you want to autostart one or more servers when the host boots up, and stop servers nicely on host shutdown.  (I won't go into details about configuring init scripts here; that's generic Debian/Linux behavior that is documented in plenty of other spots.)
 
-Even if you don't want that behavior, init scripts can also be invoked manually to stop/start/restart servers and check whether a server is running, and they will refuse to start a particular server if it is already running.  They might also provide a nice hook to use with Webmin although I haven't investigated that yet.
+Even if you don't want that behavior, init scripts can also be invoked manually to stop/start/restart servers and check whether a server is running, and they will refuse to start a particular server if it is already running.  Servers run through these init scripts will be run as background "daemon" processes, so they don't tie up a terminal window.  Init scripts might also provide a nice hook to use with Webmin although I haven't investigated that yet.
 
 In this setup, a distinct "server" is not just an executable but also some combination of options and assets.  Each init script specifies some variables that define a specific server.
 
@@ -62,7 +62,9 @@ overview
 
 The files under "/home/gameservers" in this repository are the scripts that actually run the servers.  Some of these are the commands that are launched by the init scripts, and the rest are utility/subroutine scripts used by the command scripts.
 
-There's a pretty clean separation between this stuff and the init scripts.  The init scripts don't know anything about the internals of the commands or the other scripts used to run the servers.  Conversely, the commands don't need to be invoked through the init scripts; you could run the commands manually, if you don't care about any of the niceties described in the Init Scripts section.
+There's a pretty clean separation between this stuff and the init scripts.  The init scripts don't know anything about the internals of the commands or the other scripts used to run the servers.
+
+Conversely, the commands don't need to be invoked through the init scripts; you could run the commands manually, if you don't care about any of the niceties described in the Init Scripts section.  Note that a server started manually with a command script will be a foreground process that prints some basic engine messages to the terminal; normally this is just a waste of a terminal window, but if you're trying to debug some issue with your server this might be helpful.
 
 The files directly in "/home/gameservers" are some example commands and the utility "myip" script.
 
