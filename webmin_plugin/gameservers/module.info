@@ -1,0 +1,6 @@
+name=Game Servers
+desc=Game Servers
+os_support=debian-linux
+depends=init
+category=servers
+version=1.0

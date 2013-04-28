@@ -1,6 +1,6 @@
 What?
 =====
-These are the scripts I use to run game servers for our local LAN on a Debian Linux host.  This setup should also have application to other Linux environments with some tweaking of init scripts.
+These are the scripts I use to run game servers for our local LAN on a Debian Linux host; they've also been used on a Raspberry Pi running Raspbian Linux.  This setup should also have application to other Linux environments with some tweaking of init scripts.
 
 This is just a raw file dump for now.  There's much more that could be done with this: proper packaging, customizing some bits on install, packages for the actual server files... well, maybe someday.
 
@@ -14,7 +14,7 @@ overview
 
 Init scripts are useful if you want to autostart one or more servers when the host boots up, and stop servers nicely on host shutdown.  (I won't go into details about configuring init scripts here; that's generic Debian/Linux behavior that is documented in plenty of other spots.)
 
-Even if you don't want that behavior, init scripts can also be invoked manually to stop/start/restart servers and check whether a server is running, and they will refuse to start a particular server if it is already running.  Servers run through these init scripts will be run as background "daemon" processes, so they don't tie up a terminal window.  Init scripts might also provide a nice hook to use with Webmin although I haven't investigated that yet.
+Even if you don't want that behavior, init scripts can also be invoked manually to stop/start/restart servers and check whether a server is running, and they will refuse to start a particular server if it is already running.  Servers run through these init scripts will be run as background "daemon" processes, so they don't tie up a terminal window.  Init scripts also provide a nice hook to use with Webmin.
 
 __\* ! \*__ Currently if you try to start a server when it is already running, the script will just silently do nothing.  It would be better to have it print a warning.
 
@@ -27,7 +27,7 @@ game server init scripts
 
 Each init script represents a particular server configuration.  Installing or uninstalling a server involves (among other things) adding or removing an init script.  An init script describes a particular server (by specifying the "gameserver.sh" variables listed below) and then runs the "gameserver.sh" code.
 
-The need to have a separate init script for each game server, rather than having an UberScript that takes an argument about which server to control, is basically a constraint of the way init scripts are handled at startup/shutdown time.  You need separate scripts for separate services.
+The need to have a separate init script for each game server, rather than having an UberScript that takes an argument about which server to control, is basically a constraint of the way init scripts are handled at startup/shutdown time.  You need separate scripts for separate services, if you don't want to replicate existing service-management functionality in your own special snowflake of a configuration system.  With a small number of game server scripts the current approach seems OK to me.
 
 If you want a particular game server to be ready to run, but *not* automatically start when the host starts, you should still have an init script for that game server.  Just configure your host's init script behavior so that the game server does not autostart.
 
@@ -72,7 +72,7 @@ The files directly in "/home/gameservers" are some example command scripts.
 
 The files in the "scriptlib" subdirectory contain code shared among the command scripts.
 
-The executables and data files for the game servers should be placed in their own separate subdirectory.  (In my case, "/home/gameservers/servers".)  There's nothing from that directory in this repository (yet?) but I'll discuss its structure below because the scripts work with that structure.
+The executables and data files for the game servers should be placed in their own separate subdirectory.  (In my case, "/home/gameservers/servers".)  There's nothing from that directory in this repository (yet?) but I'll discuss its structure below.
 
 game server command scripts
 ---------------------------
@@ -144,6 +144,8 @@ For my QuakeWorld and Quake 3 servers though, it was nicer to use a different fo
                 * symbolic links to other stuff in common/ktx
             * symbolic links to id1, mvdsv, mvdsv.cfg
 
+__\* ! \*__ Take this exact arrangement with a grain of salt.  It involves having a "server.cfg" file in the "ktx" directory that executes various other config files, including "../mvdsv.cfg".  However I started another setup using the latest mvdsv built from source, and it is no longer happy with config file paths that start with "../".  So some things need to be shuffled around, but the basic idea is the same.
+
 Those "excoop\_server", "ktx\_ctf\_server", and "ktx\_dm\_server" directories are the different working directories specified by my command scripts for those three servers.  (You can check the command script examples to see how they specify SERVERROOT.)
 
 Basically I wanted to have *some* sharing of assets between servers, because when I change or update common stuff I don't want to have to remember to change it in multiple places.  But some other things shouldn't be shared.  Obviously the specific server config files must differ; also it was better to have separate map collections so that (for example) map voting options wouldn't be flooded with irrelevant stuff.  And any serverside-recorded demos from different servers will be nicely segregated with this layout.  Ditto for logging.
@@ -151,3 +153,18 @@ Basically I wanted to have *some* sharing of assets between servers, because whe
 Note that having a different working directory for each server also means that you don't need as much (if any) variety in your command scripts for the different servers.  For example you can always tell the server to use "mylan.cfg" and it will pick up the one relative to its own working directory, rather than having to have a different config file name for each server.
 
 Anyway all of that is just my own personal setup.  The scripts largely don't care how you lay out your server assets; you can give "server\_loop" whatever working directory and command line you like.
+
+Webmin Plugin
+=============
+
+The "gameservers.wbm.gz" file is a plugin that you can import into Webmin, to get a serviceable web interface for starting/stopping these game servers.  It's a hasty "My First Webmin Plugin" sort of exercise but I've found it handy.
+
+![Webmin plugin screenshot](webmin_plugin/webmin_screenshot.png?raw=true)
+
+The individual plugin files are also included here if you want to examine or change them.  The importable plugin "gameservers.wbm.gz" is just a tar package of the "gameservers" directory and contents -- given the "wbm" extension instead of "tar" -- that is then gzipped.
+
+This plugin makes liberal use of existing service-management code provided by Webmin.  It would be super nice to be able to display each server's port and up/down status but that will take some actual effort.
+
+The other ripe-for-improvement bit is that the "config" and "config.info" files hardcode the available server scripts.  If you have a different set of scripts then you have to edit those files...  preferably before importing the plugin, or else you'll need to edit both the installed plugin (files located in "/usr/share/webmin/gameservers" on my system) as well as the current stored configuration ("/etc/webmin/gameservers/config").
+
+Final note: the "os_support" field of "module.info" specifies "debian-linux".  That may be overly restrictive and you can certainly change it (e.g. to "*-linux") or remove that line entirely if you want to experiment with it on other Linux flavors.

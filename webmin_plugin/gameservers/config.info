@@ -1,0 +1,7 @@
+line1=Game servers shown in list,11
+q3_cpma_dm=Quake 3 CPMA DM,4,0-exclude,1-include
+q3_cpma_ctf=Quake 3 CPMA CTF,4,0-exclude,1-include
+q3_cpma_arena=Quake 3 CPMA Multi-Arena,4,0-exclude,1-include
+q1_ktx_dm=QuakeWorld KTX DM,4,0-exclude,1-include
+q1_ktx_ctf=QuakeWorld KTX CTF,4,0-exclude,1-include
+q1_excoop=QuakeWorld co-op,4,0-exclude,1-include

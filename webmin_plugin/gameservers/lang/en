@@ -1,0 +1,10 @@
+index_title=Game Servers
+index_return=game servers
+start_button=Start
+stop_button=Stop
+restart_button=Restart
+scriptname_header=Script
+description_header=Description
+actions_header=Actions
+server_not_found=Script does not exist
+bad_action=Unknown action $1.
