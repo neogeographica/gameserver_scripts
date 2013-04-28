@@ -6,8 +6,8 @@
 # Required-Stop:     $local_fs $network
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Starts QuakeWorld co-op server
-# Description:       This script starts the QuakeWorld co-op server
+# Short-Description: QuakeWorld co-op server
+# Description:       Starts and stops the QuakeWorld co-op server
 ### END INIT INFO
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
