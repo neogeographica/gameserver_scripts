@@ -1,3 +1,4 @@
-#!/bin/sh
-# This will only work if there is a single network interface.
-/sbin/ifconfig | grep 'inet addr:' | grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1 }'
+#!/bin/bash
+# This returns the first non-localhost IP.
+IPS=(`/sbin/ip -o -4 address | awk '{print $4}' | cut -d/ -f1 | grep -v 127.0.0.1`)
+echo ${IPS[0]}

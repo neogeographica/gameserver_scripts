@@ -15,7 +15,7 @@ start()
 
 stop()
 {
-    start-stop-daemon --pidfile "$PIDFILE" --oknodo --quiet --stop
+    start-stop-daemon --pidfile "$PIDFILE" --oknodo --quiet --stop --user "$USER"
     while [ -f "$PIDFILE" ] ; do
         sleep 1
     done
@@ -42,7 +42,7 @@ case "$1" in
         ;;
 
     status)
-        start-stop-daemon --pidfile "$PIDFILE" --test --quiet --stop
+        start-stop-daemon --pidfile "$PIDFILE" --test --quiet --stop --user "$USER"
         if [ $? -ne 0 ] ; then
             echo "$DESCRIPTION server currently not running"
         else
