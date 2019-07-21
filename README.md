@@ -157,14 +157,12 @@ Anyway all of that is just my own personal setup.  The scripts largely don't car
 Webmin Plugin
 =============
 
-The "gameservers.wbm.gz" file is a plugin that you can import into Webmin, to get a serviceable web interface for starting/stopping these game servers.  It's a hasty "My First Webmin Plugin" sort of exercise but I've found it handy.
+The "gameservers.wbm.gz" file is a plugin that you can import into Webmin, to get a serviceable web interface for starting/stopping these game servers. It makes liberal use of existing service-management code provided by Webmin ... it's a hasty "My First Webmin Plugin" sort of exercise but I've found it handy. I've tried it with both Webmin 1.620 (shown below) and 1.920.
 
-![Webmin plugin screenshot](webmin_plugin/webmin_screenshot.png?raw=true)
+![Webmin plugin screenshot](webmin_plugin/webmin-1-620_screenshot.png?raw=true)
 
 The individual plugin files are also included here if you want to examine or change them.  The importable plugin "gameservers.wbm.gz" is just a tar package of the "gameservers" directory and contents -- given the "wbm" extension instead of "tar" -- that is then gzipped.
 
-This plugin makes liberal use of existing service-management code provided by Webmin.  It would be super nice to be able to display each server's port and up/down status but that will take some actual effort.
+One ripe-for-improvement bit is that the "config" and "config.info" files hardcode the available server scripts.  If you have a different set of scripts then you have to edit those files...  preferably before importing the plugin, or else you'll need to edit both the installed plugin (files located in "/usr/share/webmin/gameservers" on my system) as well as the current stored configuration ("/etc/webmin/gameservers/config").
 
-The other ripe-for-improvement bit is that the "config" and "config.info" files hardcode the available server scripts.  If you have a different set of scripts then you have to edit those files...  preferably before importing the plugin, or else you'll need to edit both the installed plugin (files located in "/usr/share/webmin/gameservers" on my system) as well as the current stored configuration ("/etc/webmin/gameservers/config").
-
-Final note: the "os_support" field of "module.info" specifies "debian-linux".  That may be overly restrictive and you can certainly change it (e.g. to "*-linux") or remove that line entirely if you want to experiment with it on other Linux flavors.
+Final note: the "os_support" field of "module.info" specifies "debian-linux".  That may be overly restrictive and you can certainly change it (e.g. to "\*-linux") or remove that line entirely if you want to experiment with it on other Linux flavors.
