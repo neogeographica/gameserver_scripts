@@ -2,8 +2,6 @@
 # index.cgi
 # Display a list of game servers and their status, with buttons for start
 # and stop.
-#
-# TBD: It would be extra-nice to display (and support refresh of) status!
 
 require './gameservers-lib.pl';
 &foreign_require('init', 'init-lib.pl');
