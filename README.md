@@ -98,7 +98,7 @@ Also I run it manually every now and then, since I actually run these servers in
 
 "myip" should have execute permissions if you want to run it manually.
 
-__\* ! \*__ On a multi-interface host, you'd need to be able to specify something in the command script that indicated which interface to use, then have "myip" make use of that selection, then use the appropriate command-line argument when launching the server to specifically ask the server to bind to the address returned by "myip".  Seems doable but I haven't experimented with it.
+__\* ! \*__ On a multi-interface host, "myip" will pick one of the IP addresses. There's currently no way to tell it which one to pick.
 
 common code: "server\_loop"
 ---------------------------
