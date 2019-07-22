@@ -5,6 +5,7 @@
 SHORTCMD=$(basename "$COMMAND")
 WORKINGDIR=$(dirname "$COMMAND")
 PIDFILE=${COMMAND}.pid
+PORTFILE=${COMMAND}.port
 
 . /lib/lsb/init-functions
 
@@ -50,8 +51,16 @@ case "$1" in
         fi
         ;;
 
+    port)
+        if cat $PORTFILE 2> /dev/null; then
+            true
+        else
+            exit 1
+        fi
+        ;;
+
     *)
-        echo "Usage: $0 {start|status|stop|restart|force-reload}"
+        echo "Usage: $0 {start|status|stop|restart|force-reload|port}"
         exit 1
         ;;
 esac

@@ -17,21 +17,21 @@ $style = '<style>.force_center {text-align: center; margin: auto}</style>';
 
 print &ui_columns_start([ $text{'scriptname_header'},
                           $text{'description_header'},
-                          $text{'status_header'},
+                          $text{'port_header'},
                           $text{'actions_header'} ], 100, 0, \@header_cell_tags);
 
 foreach $server (sort keys %config) {
    if ($config{$server} == 1) {
       $valid = init::action_status($server);
-      $status = '';
       if ($valid == 0) {
          $description = $text{'server_not_found'};
          $actions = '';
+         $port = '';
       } else {
          $init_filepath = init::action_filename($server);
          $description = &html_escape(init::init_description($init_filepath));
-         if (init::action_running(init::action_filename($server)) == 1) {
-            $status = 'X';
+         $port = &backquote_command($init_filepath . " port");
+         if ($port != '') {
             $disable_start = 1;
             $disable_stop = 0;
          } else {
@@ -44,10 +44,10 @@ foreach $server (sort keys %config) {
                                               [ 'stop', $text{'stop_button'}, undef, $disable_stop ],
                                               [ 'restart', $text{'restart_button'} ] ]);
       }
-      print &ui_columns_row([ $server, $description, $status, $actions ], \@cell_tags);
+      print &ui_columns_row([ $server, $description, $port, $actions ], \@cell_tags);
    }
 }
 
 print &ui_columns_end();
 
-print '<p/><p>'.$text{'status_note'}.'</p>';
+print '<p/><p>' . $text{'status_note'} . '</p>';

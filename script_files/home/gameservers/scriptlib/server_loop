@@ -1,12 +1,17 @@
-# This code uses SERVERROOT and CMDLINE variables.
-# SERVERROOT : working directory used when launching the server
-# CMDLINE : command line for launching the server
+# This code uses SERVERROOT, SERVERPORT, and CMDLINE variables.
+# SERVERROOT : working directory when launching the server
+# SERVERPORT : port the server will be listening on
+# CMDLINE : command line to execute
 
 # Set a PID filename based on the command filename.
 PIDFILE=${0}.pid
 
 # Create the PID FILE.
 echo $$ > "$PIDFILE"
+
+# Similarly let's advertise the port.
+PORTFILE=${0}.port
+echo $SERVERPORT > "$PORTFILE"
 
 # Grab the working directory in case the command is a relative path; we'll
 # need it later to properly delete the PID file.
@@ -20,6 +25,6 @@ cd "$SERVERROOT"
 CMDLINE="${CMDLINE} &"
 while true ; do
   eval $CMDLINE
-  trap "kill $! > /dev/null 2>&1; cd \"$PREVIOUS_PWD\"; rm -f \"$PIDFILE\"; exit" 0 2 3 15
+  trap "kill $! > /dev/null 2>&1; cd \"$PREVIOUS_PWD\"; rm -f \"$PIDFILE\" \"$PORTFILE\"; exit" 0 2 3 15
   wait
 done

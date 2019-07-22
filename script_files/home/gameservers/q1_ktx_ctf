@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# The "job" of this script is to set SERVERROOT and CMDLINE, then run
-# the code in scriptlib/server_loop.
+# The "job" of this script is to set SERVERROOT, SERVERPORT, and CMDLINE, then
+# run the code in scriptlib/server_loop.
 
 # Reference point for some other directories.
 BASEDIR=/home/gameservers

@@ -16,8 +16,6 @@ Init scripts are useful if you want to autostart one or more servers when the ho
 
 Even if you don't want that behavior, init scripts can also be invoked manually to stop/start/restart servers and check whether a server is running, and they will refuse to start a particular server if it is already running.  Servers run through these init scripts will be run as background "daemon" processes, so they don't tie up a terminal window.  Init scripts also provide a nice hook to use with Webmin.
 
-__\* ! \*__ Currently if you try to start a server when it is already running, the script will just silently do nothing.  It would be better to have it print a warning.
-
 In this setup, a distinct "server" is not just an executable but also some combination of options and assets.  Each init script specifies some variables that define a specific server.
 
 So for example you could have one init script for a Quake 3 CTF server, another script for a small-playercount Quake 3 DM server, and another script for a large-playercount Quake 3 DM server.  Even though they all use a Quake 3 executable, you could run them all at the same time (if your host is beefy enough).  But if you tried to start "small-playercount Quake 3 DM server" while an instance of "small-playercount Quake 3 DM server" was already running, that start command would be rejected.
@@ -42,6 +40,15 @@ common code: "gameserver.sh"
 
 The core of the game server init script logic is in "/lib/init/gameserver.sh".  This is generic code that implements start/stop/restart/status commands for any game server.  You should *not* need to modify "gameserver.sh" in any way when installing, uninstalling, or reconfiguring a server.
 
+"gameserver.sh" also implements a "port" command for game server init scripts. This command will print the current port of the gameserver if it is running. (If it is not running, nothing will be printed.) For example to see the port number of the q3_cpma_arena server you could run the command
+```
+/etc/init.d/q3_cpma_arena port
+```
+or on more recent versions of Debian you could also do
+```
+service q3_cpma_arena port
+```
+
 An init script that uses "gameserver.sh" should first define these variables to describe a specific game server:
 
 * COMMAND : complete path to a file that can be executed to launch the server
@@ -53,8 +60,9 @@ The "gameserver.sh" code makes a couple of assumptions based on these variables:
 
 * The working directory for executing COMMAND will be the directory where the COMMAND file is located.
 * The PID file will be created as ${COMMAND}.pid
+* While a game server is running, the file ${COMMAND}.port will contain its port number.
 
-The PID file location is not configurable in the init script because I want to make sure that normal fiddling with server configuration won't make the init script and command script disagree about where the PID file is located.  Similarly on the command-script side of things, the PID file location is determined internally rather than being affected by normal configuration changes.
+Those PID and port file locations are not configurable in the init script because I want to make sure that normal fiddling with server configuration won't make the init script and command script disagree about where the files are located.  Similarly on the command-script side of things, the PID and port file locations are determined internally rather than being affected by normal configuration changes.
 
 Command Scripts
 ===============
@@ -92,7 +100,7 @@ Command scripts should have execute permissions if you want to run them manually
 common code: "myip"
 -------------------
 
-"scriptlib/myip" is a script that returns the IP address that will be used to connect to a server, since server launch invocations tend to need that information.  This is a dumb/simple script that only works if the host has a single net interface.  It is used by "server\_loop".
+"scriptlib/myip" is a script that returns the IP address that will be used to connect to a server, since server launch invocations tend to need that information.  It is used by "server\_loop".
 
 Also I run it manually every now and then, since I actually run these servers in a portable VM that gets a dynamic IP address.  It's a quick way to find the address the servers will be using.
 
@@ -103,11 +111,12 @@ __\* ! \*__ On a multi-interface host, "myip" will pick one of the IP addresses.
 common code: "server\_loop"
 ---------------------------
 
-"scriptlib/server\_loop" is the main script that runs a server executable and restarts it if it crashes.  "server\_loop" manages creating and deleting the PID files that the init scripts use to determine if a server is currently running.  You should *not* need to modify "server\_loop" in any way when installing, uninstalling, or reconfiguring a server.
+"scriptlib/server\_loop" is the main script that runs a server executable and restarts it if it crashes.  "server\_loop" manages creating and deleting the PID and port files that the init scripts use.  You should *not* need to modify "server\_loop" in any way when installing, uninstalling, or reconfiguring a server.
 
 A command script should set up these variables before using "server\_loop":
 
 * SERVERROOT : working directory used when launching the server
+* SERVERPORT : port number the server will be listening on
 * CMDLINE : command line for launching the server
 
 The section below on the servers directory structure has some discussion on how you might want to arrange the working directories for your servers.
