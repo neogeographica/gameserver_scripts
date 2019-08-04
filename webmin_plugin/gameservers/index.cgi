@@ -29,18 +29,27 @@ foreach $server (sort keys %config) {
          $init_filepath = init::action_filename($server);
          $description = &html_escape(init::init_description($init_filepath));
          $port = &backquote_command($init_filepath . " port");
-         if ($port != '') {
-            $disable_start = 1;
-            $disable_stop = 0;
+         $has_port = ($port != '');
+         $service_is_running = (init::action_running($init_filepath) == 1);
+         if ($has_port && !$service_is_running) {
+            $actions = '<br/><b>' . $text{'running_manually'} . '</b><br/>&nbsp;';
          } else {
-            $disable_start = 0;
-            $disable_stop = 1;
+            if ($service_is_running) {
+               $disable_start = 1;
+               $disable_stop = 0;
+               if (!$has_port) {
+                  $port = '???';
+               }
+            } else {
+               $disable_start = 0;
+               $disable_stop = 1;
+            }
+            $actions = &ui_form_start('action.cgi', 'post');
+            $actions = $actions . &ui_hidden('server', $server);
+            $actions = $actions . &ui_form_end([ [ 'start', $text{'start_button'}, undef, $disable_start ],
+                                                 [ 'stop', $text{'stop_button'}, undef, $disable_stop ],
+                                                 [ 'restart', $text{'restart_button'}, undef, $disable_stop ] ]);
          }
-         $actions = &ui_form_start('action.cgi', 'post');
-         $actions = $actions . &ui_hidden('server', $server);
-         $actions = $actions . &ui_form_end([ [ 'start', $text{'start_button'}, undef, $disable_start ],
-                                              [ 'stop', $text{'stop_button'}, undef, $disable_stop ],
-                                              [ 'restart', $text{'restart_button'} ] ]);
       }
       print &ui_columns_row([ $server, $description, $port, $actions ], \@cell_tags);
    }
